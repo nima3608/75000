@@ -1,0 +1,131 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: web0004 # hier dein gebautes Image eintragen
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        env:
+        - name: FLASK_ENV
+          value: "development"
+        - name: FLASK_APP
+          value: "app.py"
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: web-service
+spec:
+  selector:
+    app: web
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+  type: NodePort
+---
+---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+spec:
+  selector:
+    app: redis
+  ports:
+  - protocol: TCP
+    port: 6379
+    targetPort: 6379
+---
+---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: frontend-volume
+          mountPath: /usr/share/nginx/html
+          readOnly: true
+      volumes:
+      - name: frontend-volume
+        hostPath:
+          path: /frontend # bitte den Pfad anpassen
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort
+
+##################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-service
+spec:
+  selector:
+    app: nginx  # adjust to match your nginx pod labels
+  ports:
+  - port: 80
+    targetPort: 80
+
+
+    

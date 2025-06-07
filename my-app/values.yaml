@@ -1,0 +1,16 @@
+web:
+  image: web0004
+  port: 5000
+
+frontend:
+  image: nginx:alpine
+  port: 80
+  volumePath: /frontend
+
+redis:
+  image: redis:alpine
+  port: 6379
+
+ingress:
+  enabled: true
+  host: myapp.local

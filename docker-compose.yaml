@@ -1,0 +1,29 @@
+services:
+  web:
+    build: ./backend1
+    image: web0004
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend1:/app
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+ 
+    ports:
+      - "6379:6379"  
+  
+
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    ports:
+      - "3000:80"
+
+      

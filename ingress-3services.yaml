@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: myapp.local
+    http:
+      paths:
+      - path: /frontend
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+      - path: /nginx
+        pathType: Prefix
+        backend:
+          service:
+            name: my-nginx-service
+            port:
+              number: 80
+      - path: /redis
+        pathType: Prefix
+        backend:
+          service:
+            name: redis-service
+            port:
+              number: 6379
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-service
+            port:
+              number: 5000
